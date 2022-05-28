@@ -1,0 +1,27 @@
+ol > li {
+    margin-top: 25px;
+}
+
+.wrapper > li {
+    margin-top: 14px;
+}
+
+form ol {
+	margin-left: 32px;
+}
+
+ul {
+	list-style-type: lower-alpha;
+}
+
+fieldset {
+    display: block;
+}
+
+li::before {
+    content: ".";
+    display: block;
+    height: 0;
+    overflow: hidden;
+    width: 0;
+}
