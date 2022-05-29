@@ -24,13 +24,25 @@ export default function App() {
         lastName: "",
         contactNo: "",
         birthday: "",
-        civilStatus: ""
+        civilStatus: "",
+        soreThroat: "n",
+        bodyPains: "n",
+        headache: "n",
+        fever: "n",
+        coughsCold: "n",
+        dyspnea: "n",
+        diarrhea: "n",
+        workplaceWithCovid: "n",
+        contactWithSymptoms: "n",
+        internationalTravel: "n",
+        ncrTravel: "n",
+        pwd: "n",
+        pregnant: "n",
+        agree: false
     })
-    console.log(formData)
 
     function nextPage() {
         setFormData(prevFormData => {
-            console.log(prevFormData.page)
             return {
                 ...prevFormData,
                 page: prevFormData.page + 1
