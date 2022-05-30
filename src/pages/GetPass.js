@@ -12,6 +12,7 @@ import PersonalDetails from "./PersonalDetails"
 import UserDetails from "./UserDetails"
 import ErrorPage from "./ErrorPage";
 import HealthDeclaration from "./HealthDeclaration";
+import "../services/utils/validate"
 
 export default function App() {
     const [formData, setFormData] = React.useState({
@@ -60,6 +61,7 @@ export default function App() {
     }
 
     function handleChange(event) {
+        console.log("handleChange")
         const { name, value, type, checked } = event.target
         setFormData(prevFormData => {
             return {
@@ -108,27 +110,7 @@ export default function App() {
             <ChakraProvider theme={theme}>
                 <VStack spacing={6} align="flex-start">
                     <Headline title={title} />
-                    <Container
-                        as="form"
-                        bg="white"
-                        maxW="container.lg"
-                        borderRadius="2xl"
-                        padding={8}
-                        border="1px"
-                        borderColor="gray.300"
-                    >
-                        {page}
-                    </Container>
-                    <HStack>
-                        {
-                            formData.page !== 1 &&
-                            <Button colorScheme="teal" onClick={prevPage}>Back</Button>
-                        }
-                        {
-                            formData.page !== 3 &&
-                            <Button colorScheme="teal" onClick={nextPage}>Next</Button>
-                        }
-                    </HStack>
+                    {page}
                 </VStack>
             </ChakraProvider>
         </>
