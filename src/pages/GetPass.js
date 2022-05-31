@@ -1,17 +1,15 @@
 import {
     ChakraProvider,
-    Container,
-    VStack,
-    HStack,
-    Button
+    VStack
 } from "@chakra-ui/react";
 import theme from "../theme/index"
 import React from "react"
 import Headline from "../components/Headline"
 import PersonalDetails from "./PersonalDetails"
 import UserDetails from "./UserDetails"
-import ErrorPage from "./ErrorPage";
-import HealthDeclaration from "./HealthDeclaration";
+import ErrorPage from "./ErrorPage"
+import HealthDeclaration from "./HealthDeclaration"
+import SuccessPage from "./SuccessPage"
 import "../services/utils/validate"
 
 export default function App() {
@@ -44,6 +42,7 @@ export default function App() {
 
     function nextPage() {
         setFormData(prevFormData => {
+            console.log("nextPage")
             return {
                 ...prevFormData,
                 page: prevFormData.page + 1
@@ -61,7 +60,6 @@ export default function App() {
     }
 
     function handleChange(event) {
-        console.log("handleChange")
         const { name, value, type, checked } = event.target
         setFormData(prevFormData => {
             return {
@@ -89,7 +87,7 @@ export default function App() {
                     formData={formData}
                     handleChange={handleChange}
                     prevPage={prevPage}
-                    nextPage={prevPage}
+                    nextPage={nextPage}
                 />
             break
         case 3:
@@ -99,7 +97,12 @@ export default function App() {
                     formData={formData}
                     handleChange={handleChange}
                     prevPage={prevPage}
+                    nextPage={nextPage}
                 />
+            break
+        case 4:
+            title = "You have successfully registered!"
+            page = <SuccessPage formData={formData} />
             break
         default:
             page = <ErrorPage />

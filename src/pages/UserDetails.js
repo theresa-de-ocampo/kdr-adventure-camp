@@ -100,7 +100,10 @@ export default function UserDetails(props) {
                             onBlur={checkUsername}
                             value={props.formData.username}
                         />
-                        {errors.usernameEmpty && <FormErrorMessage>Username is required.</FormErrorMessage>}
+                        {
+                            errors.usernameEmpty &&
+                            <FormErrorMessage>Username is required.</FormErrorMessage>
+                        }
                     </FormControl>
                     <FormControl isRequired isInvalid={errors.emailEmpty || errors.emailInvalid}>
                         <FormLabel htmlFor="email">Email</FormLabel>
