@@ -71,7 +71,7 @@ export default function PersonalDetails(props) {
                 </SimpleGrid>
             </Container>
             <HStack>
-                <Button colorScheme="teal" onClick={props.prevPage}>Back</Button>
+                <Button colorScheme="teal" onClick={props.prevPage} variant="outline">Back</Button>
                 <Button colorScheme="teal" onClick={props.nextPage}>Next</Button>
             </HStack>
         </>

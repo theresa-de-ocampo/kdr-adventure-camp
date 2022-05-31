@@ -11,7 +11,7 @@ export default function UserDetails(props) {
         confirmPasswordEmpty: false,
         confirmPasswordDoesNotMatch: false
     })
-    console.log(errors)
+    const [isNextClicked, setIsNextClicked] = React.useState(false)
 
     function setError(key, value) {
         setFormErrors(prevErrors => {
@@ -23,21 +23,58 @@ export default function UserDetails(props) {
     }
     
     function handleValidation() {
-        if (!props.formData.username)
-            setError("usernameEmpty", true)
-        else
-            setError("usernameEmpty", false)
+        checkUsername()
+        checkEmail()
+        checkPassword()
+        checkConfirmPassword()
+    }
 
-        console.log(Object.values(errors))
-        return Object.values(errors).some(error => error == true)
+    function checkUsername() {
+        setError("usernameEmpty", !Boolean(props.formData.username))
+    }
+
+    function checkEmail() {
+        const email = props.formData.email
+        setError("emailEmpty", !Boolean(email))
+
+        if (email) {
+            const regex = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+            setError("emailInvalid", !regex.test(email))
+        }
+    }
+
+    function checkPassword() {
+        const password = props.formData.password
+        setError("passwordEmpty", !Boolean(password))
+
+        if (password) {
+            const regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z!@\-#\s$%^&*]{8,}$/
+            setError("passwordNotStrong", !regex.test(password))
+        }
+    }
+
+    function checkConfirmPassword() {
+        const confirmPassword = props.formData.confirmPassword
+        setError("confirmPasswordEmpty", !Boolean(confirmPassword))
+
+        if (confirmPassword)
+            setError("confirmPasswordDoesNotMatch", confirmPassword !== props.formData.password)
     }
 
     function handleNextPage() {
-        let withErrors = handleValidation()
-        console.log(withErrors)
-        /* if (!withErrors)
-            props.nextPage() */
+        handleValidation()
+        setIsNextClicked(true)
     }
+
+    React.useEffect(function() {
+        if (isNextClicked) {
+            let withErrors = Object.values(errors).some(error => error === true)
+            if (!withErrors)
+                props.nextPage()
+            else
+                setIsNextClicked(false)
+        }
+    }, [isNextClicked, errors, props])
 
     return (
         <>
@@ -56,8 +93,11 @@ export default function UserDetails(props) {
                         <Input
                             id="username" type="text" name="username" variant="filled"
                             onChange={props.handleChange}
-                            onKeyUp={handleValidation}
-                            onBlur={handleValidation}
+                            onKeyUp={function(e) {
+                                if (!(e.key === "Tab" || e.key === "Shift"))
+                                    checkUsername()
+                            }}
+                            onBlur={checkUsername}
                             value={props.formData.username}
                         />
                         {errors.usernameEmpty && <FormErrorMessage>Username is required.</FormErrorMessage>}
@@ -67,23 +107,57 @@ export default function UserDetails(props) {
                         <Input
                             id="email" type="email" name="email" variant="filled"
                             onChange={props.handleChange}
+                            onKeyUp={function(e) {
+                                if (!(e.key === "Tab" || e.key === "Shift"))
+                                    checkEmail()
+                            }}
+                            onBlur={checkEmail}
                             value={props.formData.email}
                         />
+                        {
+                            errors.emailEmpty ?
+                            <FormErrorMessage>Email is required.</FormErrorMessage> :
+                            <FormErrorMessage>Please enter a valid email.</FormErrorMessage>
+                        }
                     </FormControl>
                     <FormControl isRequired isInvalid={errors.passwordEmpty || errors.passwordNotStrong}>
                         <FormLabel htmlFor="password">Password</FormLabel>
                         <Input
                             id="password" type="password" name="password" variant="filled"
-                            onChange={props.handleChange} value={props.formData.password}
+                            onChange={props.handleChange}
+                            onKeyUp={function(e) {
+                                if (!(e.key === "Tab" || e.key === "Shift"))
+                                    checkPassword()
+                            }}
+                            onBlur={checkPassword}
+                            value={props.formData.password}
                         />
+                        {
+                            errors.passwordEmpty ?
+                            <FormErrorMessage>Password is required.</FormErrorMessage> :
+                            <FormErrorMessage>
+                                Password should be a minimum of 8 characters consisting of at least one uppercase letter, one lowercase letter, and a digit.
+                            </FormErrorMessage>
+                        }
                     </FormControl>
                     <FormControl isRequired
                         isInvalid={errors.confirmPasswordEmpty || errors.confirmPasswordDoesNotMatch}>
                         <FormLabel htmlFor="confirm-password">Confirm Password</FormLabel>
                         <Input
                             id="confirm-password" type="password" name="confirmPassword" variant="filled"
-                            onChange={props.handleChange} value={props.formData.confirmPassword}
+                            onChange={props.handleChange}
+                            onKeyUp={function(e) {
+                                if (!(e.key === "Tab" || e.key === "Shift"))
+                                    checkConfirmPassword()
+                            }}
+                            onBlur={checkConfirmPassword}
+                            value={props.formData.confirmPassword}
                         />
+                        {
+                            errors.confirmPasswordEmpty ?
+                            <FormErrorMessage>Password confirmation is required.</FormErrorMessage> :
+                            <FormErrorMessage>Passwords do not match.</FormErrorMessage>
+                        }
                     </FormControl>
                 </SimpleGrid>
             </Container>
