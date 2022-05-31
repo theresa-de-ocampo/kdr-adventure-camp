@@ -9,8 +9,6 @@ import PersonalDetails from "./PersonalDetails"
 import UserDetails from "./UserDetails"
 import ErrorPage from "./ErrorPage"
 import HealthDeclaration from "./HealthDeclaration"
-import SuccessPage from "./SuccessPage"
-import "../services/utils/validate"
 
 export default function App() {
     const [formData, setFormData] = React.useState({
@@ -42,7 +40,6 @@ export default function App() {
 
     function nextPage() {
         setFormData(prevFormData => {
-            console.log("nextPage")
             return {
                 ...prevFormData,
                 page: prevFormData.page + 1
@@ -102,7 +99,7 @@ export default function App() {
             break
         case 4:
             title = "You have successfully registered!"
-            page = <SuccessPage formData={formData} />
+            page = <></>
             break
         default:
             page = <ErrorPage />

@@ -15,8 +15,6 @@ import YesOrNo from "../components/YesOrNo"
 export default function HealthDeclaration(props) {
     const [doesNotAgree, setDoesNotAgree] = React.useState(false)
     const [isNextClicked, setIsNextClicked] = React.useState(false)
-    console.log("doesNotAgree: " + doesNotAgree)
-    console.log("props.formData.agree: " + props.formData.agree)
 
     function handleNextPage() {
         setDoesNotAgree(!props.formData.agree)
