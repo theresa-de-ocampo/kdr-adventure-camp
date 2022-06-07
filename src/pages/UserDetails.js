@@ -74,7 +74,8 @@ export default function UserDetails(props) {
             else
                 setIsNextClicked(false)
         }
-    }, [isNextClicked, errors, props])
+        // eslint-disable-next-line
+    }, [isNextClicked])
 
     return (
         <>

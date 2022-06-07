@@ -28,10 +28,13 @@ export default function HealthDeclaration(props) {
             else
                 setIsNextClicked(false)
         }
+        // eslint-disable-next-line
+    }, [isNextClicked])
 
+    React.useEffect(function() {
         if (props.formData.agree)
             setDoesNotAgree(false)
-    }, [isNextClicked, props, doesNotAgree])
+    }, [props.formData.agree])
 
     return (
         <>
