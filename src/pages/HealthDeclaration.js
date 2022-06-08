@@ -22,30 +22,65 @@ export default function HealthDeclaration(props) {
         setIsNextClicked(true)
     }
 
+    async function submitData() {
+        const data = props.formData
+        let userId
+        const userData = {
+            username: data.username,
+            email: data.email,
+            password: data.password,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            contactNo: data.contactNo,
+            birthday: data.birthday ? data.birthday : null,
+            civilStatus: data.civilStatus ? data.civilStatus : null
+        }
+        await Axios.post("/auth/local/register", userData)
+            .then(response => userId = response.data.user.id)
+            .catch(error => {
+                console.log(error)
+                const errorDetails = error.response.data.error
+                const errorCode = errorDetails.status
+                const message = errorDetails.message
+                console.log(`Error ${errorCode}: ${message}`)
+            })
+
+        if (userId) {
+            const healthDeclaration = {
+                data: {
+                    soreThroat: data.soreThroat === "y" ? true : false,
+                    bodyPains: data.bodyPains === "y" ? true : false,
+                    headache: data.headache === "y" ? true : false,
+                    fever: data.fever === "y" ? true : false,
+                    coughsCold: data.coughsCold === "y" ? true : false,
+                    dyspnea: data.dyspnea === "y" ? true : false,
+                    diarrhea: data.diarrhea === "y" ? true : false,
+                    workplaceWithCovid: data.workplaceWithCovid === "y" ? true : false,
+                    contactWithSymptoms: data.contactWithSymptoms === "y" ? true : false,
+                    internationalTravel: data.internationalTravel === "y" ? true : false,
+                    ncrTravel: data.ncrTravel === "y" ? true : false,
+                    pwd: data.pwd === "y" ? true : false,
+                    pregnant: data.pregnant === "y" ? true : false,
+                    userId: userId
+                }
+            }
+    
+            Axios.post("/health-declarations", healthDeclaration)
+                .then(response => console.log(response))
+                .catch(error => {
+                    console.log(error)
+                    const errorDetails = error.response.data.error
+                    const errorCode = errorDetails.status
+                    const message = errorDetails.message
+                    console.log(`Error ${errorCode}: ${message}`)
+                })
+        }
+    }
+
     React.useEffect(function() {
         if (isNextClicked) {
             if (!doesNotAgree) {
-                // Submit data
-                const data = props.formData
-                const userData = {
-                    username: data.username,
-                    email: data.email,
-                    password: data.password,
-                    firstName: data.firstName,
-                    lastName: data.lastName,
-                    contactNo: data.contactNo,
-                    birthday: data.birthday ? data.birthday : null,
-                    civilStatus: data.civilStatus ? data.civilStatus : null
-                }
-                Axios.post("/auth/local/register", userData)
-                    .then(response => console.log(response))
-                    .catch(error => {
-                        console.log(error)
-                        const errorDetails = error.response.data.error
-                        const errorCode = errorDetails.status
-                        const message = errorDetails.message
-                        console.log(`Error ${errorCode}: ${message}`)
-                    })
+                submitData()
                 props.nextPage()
             }
             else
