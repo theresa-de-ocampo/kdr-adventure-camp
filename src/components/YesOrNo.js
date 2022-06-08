@@ -5,16 +5,6 @@ import {
 } from "@chakra-ui/react"
 
 export default function RadioButton(props) {
-    function createEvent(name, value) {
-        return {
-            target: {
-                name: name,
-                value: value,
-                type: "radio",
-                checked: false
-            }
-        }
-    }
     const name = props.name
 
     return (

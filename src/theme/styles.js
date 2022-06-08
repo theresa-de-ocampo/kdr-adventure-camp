@@ -1,4 +1,4 @@
-export default {
+const styles = {
     styles: {
         global: {
             body: {
@@ -15,3 +15,5 @@ export default {
         mono: "Times New Roman"
     }
 }
+
+export default styles

@@ -11,6 +11,7 @@ import {
 import React from "react"
 import "./health-declaration.css"
 import YesOrNo from "../components/YesOrNo"
+import Axios from "../api/Axios";
 
 export default function HealthDeclaration(props) {
     const [doesNotAgree, setDoesNotAgree] = React.useState(false)
@@ -23,8 +24,30 @@ export default function HealthDeclaration(props) {
 
     React.useEffect(function() {
         if (isNextClicked) {
-            if (!doesNotAgree)
+            if (!doesNotAgree) {
+                // Submit data
+                const data = props.formData
+                const userData = {
+                    username: data.username,
+                    email: data.email,
+                    password: data.password,
+                    firstName: data.firstName,
+                    lastName: data.lastName,
+                    contactNo: data.contactNo,
+                    birthday: data.birthday ? data.birthday : null,
+                    civilStatus: data.civilStatus ? data.civilStatus : null
+                }
+                Axios.post("/auth/local/register", userData)
+                    .then(response => console.log(response))
+                    .catch(error => {
+                        console.log(error)
+                        const errorDetails = error.response.data.error
+                        const errorCode = errorDetails.status
+                        const message = errorDetails.message
+                        console.log(`Error ${errorCode}: ${message}`)
+                    })
                 props.nextPage()
+            }
             else
                 setIsNextClicked(false)
         }
