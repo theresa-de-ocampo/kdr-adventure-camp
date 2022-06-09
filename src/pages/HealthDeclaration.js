@@ -6,16 +6,20 @@ import {
     FormErrorMessage,
     Checkbox,
     HStack,
-    Button
+    Button,
+    useToast
 } from "@chakra-ui/react"
 import React from "react"
 import "./health-declaration.css"
 import YesOrNo from "../components/YesOrNo"
-import Axios from "../api/Axios";
+import Axios from "../api/Axios"
+import errorHandler from "../services/utils/errorHandler"
 
 export default function HealthDeclaration(props) {
     const [doesNotAgree, setDoesNotAgree] = React.useState(false)
     const [isNextClicked, setIsNextClicked] = React.useState(false)
+    const [isLoading, setIsLoading] = React.useState(false)
+    const toast = useToast()
 
     function handleNextPage() {
         setDoesNotAgree(!props.formData.agree)
@@ -24,7 +28,7 @@ export default function HealthDeclaration(props) {
 
     async function submitData() {
         const data = props.formData
-        let userId
+        let userId, success = false
         const userData = {
             username: data.username,
             email: data.email,
@@ -35,15 +39,10 @@ export default function HealthDeclaration(props) {
             birthday: data.birthday ? data.birthday : null,
             civilStatus: data.civilStatus ? data.civilStatus : null
         }
+
         await Axios.post("/auth/local/register", userData)
             .then(response => userId = response.data.user.id)
-            .catch(error => {
-                console.log(error)
-                const errorDetails = error.response.data.error
-                const errorCode = errorDetails.status
-                const message = errorDetails.message
-                console.log(`Error ${errorCode}: ${message}`)
-            })
+            .catch(error => errorHandler(error, toast))
 
         if (userId) {
             const healthDeclaration = {
@@ -64,24 +63,29 @@ export default function HealthDeclaration(props) {
                     userId: userId
                 }
             }
-    
-            Axios.post("/health-declarations", healthDeclaration)
-                .then(response => console.log(response))
-                .catch(error => {
-                    console.log(error)
-                    const errorDetails = error.response.data.error
-                    const errorCode = errorDetails.status
-                    const message = errorDetails.message
-                    console.log(`Error ${errorCode}: ${message}`)
-                })
+            
+            await Axios.post("/health-declarations", healthDeclaration)
+                .then(() => success = true)
+                .catch(error => errorHandler(error, toast))
         }
+        setIsLoading(false)
+        
+        return success
     }
 
     React.useEffect(function() {
+        async function processData() {
+            const success = await submitData()
+            if (success)
+                props.nextPage()
+            else
+                setIsNextClicked(false)
+        }
+
         if (isNextClicked) {
             if (!doesNotAgree) {
-                submitData()
-                props.nextPage()
+                setIsLoading(true)
+                processData()
             }
             else
                 setIsNextClicked(false)
@@ -284,8 +288,18 @@ export default function HealthDeclaration(props) {
                 </FormControl>
             </Container>
             <HStack>
-                <Button colorScheme="teal" onClick={props.prevPage} variant="outline">Back</Button>
-                <Button colorScheme="teal" onClick={handleNextPage}>Submit</Button>
+                <Button
+                    colorScheme="teal" onClick={props.prevPage} variant="outline"
+                    isLoading={isLoading}
+                >
+                    Back
+                </Button>
+                <Button
+                    colorScheme="teal" onClick={handleNextPage}
+                    isLoading={isLoading} loadingText="Submitting"
+                >
+                    Submit
+                </Button>
             </HStack>
         </>
     )
